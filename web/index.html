@@ -44,7 +44,7 @@
         <script>
             window.socket = io();
             var s2 = io("/chat");
-            var numeroUsuario = 1;
+            
             setInterval(function() {
                 startTime = Date.now();
                 window.socket.emit('ping');
@@ -55,8 +55,7 @@
                 $("#latencia_painel_value").text(latency);
             });
             window.socket.on('new-player', function(data) {
-                numeroUsuario++;
-                $("#latencia_painel_usuario_value").text(numeroUsuario);
+                
                 newUsuario(data)
             });
             window.socket.on('move-player', function(data) {

@@ -161,6 +161,8 @@ window.addEventListener("load",function(t){
             player.position.x += 0.2;       
         }
         if(controlls.hasNewPLayer && (hasRederer = true)){
+            let numero = Object.keys(window.listPlayers);
+            $("#latencia_painel_usuario_value").text(numero.length);
             controlls.hasNewPLayer = false; 
         }
         if(controlls.hasMovePLayer && (hasRederer = true)){

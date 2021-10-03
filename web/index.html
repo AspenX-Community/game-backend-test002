@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt">
+    <head>
+        <title>Game Test</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="assets/css/index.css">
+        <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    </head>
+    <body>
+        <nav></nav>
+        <div role="main" >
+            <div id="latencia_painel">
+                Latencia: <strong id="latencia_painel_value">...</strong><br/>
+                Usuarios: <strong id="latencia_painel_usuario_value">...</strong>
+            </div>
+            <div id="game" style="display: none;">
+
+            </div>
+            <svg class="loader" version="1.1" id="L9" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                viewBox="0 0 100 100" enable-background="new 0 0 0 0" xml:space="preserve">
+                    <rect x="40" y="50" width="4" height="10" fill="#fff">
+                    <animateTransform attributeType="xml"
+                        attributeName="transform" type="translate"
+                        values="0 0; 0 20; 0 0"
+                        begin="0" dur="0.6s" repeatCount="indefinite" />
+                    </rect>
+                    <rect x="50" y="50" width="4" height="10" fill="#fff">
+                    <animateTransform attributeType="xml"
+                        attributeName="transform" type="translate"
+                        values="0 0; 0 20; 0 0"
+                        begin="0.2s" dur="0.6s" repeatCount="indefinite" />
+                    </rect>
+                    <rect x="60" y="50" width="4" height="10" fill="#fff">
+                    <animateTransform attributeType="xml"
+                        attributeName="transform" type="translate"
+                        values="0 0; 0 20; 0 0"
+                        begin="0.4s" dur="0.6s" repeatCount="indefinite" />
+                    </rect>
+                </svg>
+        </div>
+        <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+        <script src="assets/js/three.js"></script>
+        <script src="assets/js/game.js"></script>
+        <script>
+            window.socket = io();
+            var s2 = io("/chat");
+            var numeroUsuario = 1;
+            setInterval(function() {
+                startTime = Date.now();
+                window.socket.emit('ping');
+            }, 2000);
+    
+            window.socket.on('pong', function() {
+                latency = Date.now() - startTime;
+                $("#latencia_painel_value").text(latency);
+            });
+            window.socket.on('new-player', function(data) {
+                numeroUsuario++;
+                $("#latencia_painel_usuario_value").text(numeroUsuario);
+                newUsuario(data)
+            });
+            window.socket.on('move-player', function(data) {
+                moveUsuario(data);
+            });
+        </script>
+        <style>
+            div[role="main"]{
+                background-color: var(--body-color);
+                display: block;
+                overflow: auto;
+            }
+            .loader{
+                margin-top: 25vh;
+                height: 40vh;
+                margin-left: auto;
+                margin-right: auto;
+                display: block;
+                text-align: center;
+            }
+        </style>
+    </body>
+</html>

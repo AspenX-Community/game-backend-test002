@@ -1,0 +1,356 @@
+/*
+   usar o  sum := sha256.Sum256([]byte("<numero da carteira>"))
+   para não armazenar em texto puro o nuemro da carteira
+*/
+
+package main
+
+import (
+	"fmt"
+	"io/ioutil"
+	"unsafe"
+
+	"github.com/davecgh/go-spew/spew"
+	"gopkg.in/mgo.v2/bson"
+)
+
+type Endereco struct {
+	Uf          string `omitempty,bson:"uf"`
+	Bairro      string `omitempty,bson:"bairro"`
+	Cidade      string `omitempty,bson:"cidade"`
+	N           int    `omitempty,bson:"n"`
+	Logradouro  string `omitempty,bson:"logradouro"`
+	Complemento string `omitempty,bson:"complemento"`
+	Teste       string `omitempty,bson:"teste"`
+}
+
+// `bson:" inline "`
+type Usuario struct {
+	Uuid     string   `omitempty,bson:"uuid"`
+	Nome     string   `omitempty,bson:"nome"`
+	Email    string   `omitempty,bson:"email"`
+	Endereco Endereco `omitempty,bson:"endereco"`
+	TesteU   string   `omitempty,bson:"teste"`
+}
+
+//func main() {
+	/*user := Usuario{
+		Uuid:  "3bff3d56-0dfa-474f-9260-0a22b11db21c",
+		Nome:  "gil TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDATWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDATWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDATWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDATWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDATWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDATWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDATWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDATWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDATWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDATWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDATWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDATWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDATWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDATWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDATWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDATWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDATWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA",
+		Email: "TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA",
+	}
+
+	user.Endereco = Endereco{
+		Uf:          "SP",
+		Bairro:      "JD. Silveira",
+		Cidade:      "Barueri",
+		N:           446,
+		Logradouro:  "Rua Brigadeiro Jordão",
+		Complemento: " Escadão",
+	}
+
+	data, err := bson.Marshal(&user)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println("Memory >> *.BIN:")
+	fmt.Println("USER Memory:", unsafe.Sizeof(user))
+	fmt.Println("USER Armazenado Memory:", unsafe.Sizeof(data))
+	//fmt.Println("BINARY:", data)
+	fmt.Print("DUMP: ")
+	spew.Dump(user)
+
+	ioutil.WriteFile("filename.bin", data, 0644)
+	*/
+	fmt.Println(".BIN >> Memory:")
+	content, err := ioutil.ReadFile("filename.bin")
+	if err != nil {
+		panic(err)
+	}
+	var obj Usuario
+
+	if err := bson.Unmarshal(content, &obj); err != nil {
+		panic(err)
+	}
+
+	fmt.Println("USER Memory:", unsafe.Sizeof(obj))
+	fmt.Println("USER Armazenado Memory RAW :", unsafe.Sizeof(content))
+	//spew.Dump(obj)
+	//fmt.Println("BINARY:", data)
+	fmt.Print("DUMP: ")
+	spew.Dump(obj)
+//}
+
+// Resultados
+//    USER em memoria server: 408 bytes
+//    USER armazenado BSON: 24 bytes
+
+/* BSON GERAL
+import (
+	"fmt"
+	"unsafe"
+
+	"github.com/davecgh/go-spew/spew"
+	"gopkg.in/mgo.v2/bson"
+)
+
+type Person struct {
+	Id       string `json:"id",omitempty`
+	Nome     string `json:"nome",omitempty`
+	Position string `json:"position",omitempty`
+}
+
+type Endereco struct {
+	uf                      string
+	bairro                  string
+	cidade                  string
+	n                       int
+	logradouro, complemento string
+}
+type Usuario struct {
+	uuid     string
+	nome     string
+	email    string
+	email1   string
+	email2   string
+	email3   string
+	email4   string
+	email5   string
+	email6   string
+	email7   string
+	email8   string
+	email9   string
+	email10  string
+	email11  string
+	email12  string
+	email13  string
+	email14  string
+	email15  string
+	email16  string
+	email17  string
+	endereco Endereco
+}
+
+var clientes map[string]Person
+
+func main() {
+
+	clientes = make(map[string]Person)
+	clientes["0001"] = Person{
+		Nome:     "Gilberto",
+		Id:       "0001",
+		Position: "asdasdasdadasd",
+	}
+	clientes["0002"] = Person{
+		Nome:     "Claudio",
+		Id:       "0002",
+		Position: "asdasdasdadasd",
+	}
+	clientes["0003"] = Person{
+		Nome:     "Raimundo",
+		Id:       "0003",
+		Position: "asdasdasdadasd",
+	}
+
+	data, err := bson.Marshal(&clientes)
+	if err != nil {
+		panic(err)
+	}
+	//fmt.Printf("%q", data)
+	spew.Dump(data)
+	fmt.Println("Armazenado", unsafe.Sizeof(data))
+
+	var obj map[string]Person
+	err = bson.Unmarshal(data, &obj)
+	if err := bson.Unmarshal(data, &obj); err != nil {
+		panic(err)
+	}
+	spew.Dump( obj)
+	fmt.Println("Person:", unsafe.Sizeof(Person{
+		Nome:     "Gilberto",
+		Id:       "0001",
+		Position: "asdasdasdadasd",
+	}))
+
+	user := Usuario{
+		uuid:    "3bff3d56-0dfa-474f-9260-0a22b11db21c",
+		nome:    "gil",
+		email:   "TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA",
+		email1:  "TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA",
+		email2:  "TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA",
+		email3:  "TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA",
+		email4:  "TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA",
+		email5:  "TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA",
+		email6:  "TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA",
+		email7:  "TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA",
+		email8:  "TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA",
+		email9:  "TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA",
+		email10: "TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA",
+		email11: "TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA",
+		email12: "TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA",
+		email13: "TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA",
+		email14: "TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA",
+		email15: "TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA",
+		email16: "TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA",
+		email17: "TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA",
+	}
+
+	user.endereco = Endereco{uf: "SP",
+		bairro:      "JD. Silveira",
+		cidade:      "Barueri",
+		n:           446,
+		logradouro:  "Rua Brigadeiro Jordão",
+		complemento: " Escadão",
+	}
+	fmt.Println("\nREGISTRO :")
+	fmt.Println("USER: ", unsafe.Sizeof(user))
+	data1, err := bson.Marshal(user)
+	fmt.Println("USER Armazenado:", unsafe.Sizeof(data1))
+	fmt.Println("USER Armazenado view:")
+	spew.Dump(data1)
+
+	/* Tudo Ok no bson
+	// Serializa:
+	data, err := bson.Marshal(&Person{
+		Nome:     "Gilberto",
+		Id:       "324423423424242",
+		Position: "asdasdasdadasd",
+	})
+	if err != nil {
+		panic(err)
+	}
+	//fmt.Printf("%q", data)
+	spew.Dump(data)
+	// Desesrializa :
+	var obj Person
+	err = bson.Unmarshal(data, &obj)
+	if err := bson.Unmarshal(data, &obj); err != nil {
+		panic(err)
+	}
+	//fmt.Print(obj)
+	spew.Dump(obj)*/
+//}
+
+/*
+import (
+	"encoding/json"
+	"fmt"
+	"log"
+	"net/http"
+	"gopkg.in/mgo.v2/bson"
+	socketio "github.com/googollee/go-socket.io"
+)
+
+type Usuario struct {
+	Id       string `json:"id"`
+	Nome     string `json:"nome"`
+	Position string `json:"position"`
+	com      *socketio.Conn
+}
+
+// Lista de Usuarios conectados
+var clientes map[string]Usuario
+
+func main() {
+
+	server := socketio.NewServer(nil)
+
+	clientes = make(map[string]Usuario)
+
+	server.OnConnect("/", func(s socketio.Conn) error {
+		s.SetContext("")
+
+		client := Usuario{
+			Id:   s.ID(),
+			Nome: "BaconVegano" + string(s.ID()),
+			com:  &s,
+		}
+		data, _ := json.Marshal(client)
+		for id := range clientes {
+			var com = *clientes[id].com
+			com.Emit("new-player", string(data))
+			dataUser, _ := json.Marshal(clientes[id])
+			s.Emit("new-player", string(dataUser))
+		}
+		clientes[s.ID()] = client
+
+		fmt.Println("connected:", s.ID())
+		//PrintMemUsage()
+		fmt.Println("Clientes: ", len(clientes))
+		return nil
+	})
+	// LATENCIA
+	server.OnEvent("/", "ping", func(s socketio.Conn, msg string) {
+		s.Emit("pong")
+	})
+	server.OnEvent("/", "move-player", func(s socketio.Conn, msg string) {
+		client := clientes[s.ID()]
+		client.Position = msg
+		data, _ := json.Marshal(client)
+		for id := range clientes {
+			if id == s.ID() {
+				continue
+			}
+			var com = *clientes[id].com
+			com.Emit("move-player", string(data))
+		}
+	})
+
+	server.OnEvent("/", "notice", func(s socketio.Conn, msg string) {
+		fmt.Println("notice:", msg)
+
+		for id := range clientes {
+			var com = *clientes[id].com
+			com.Emit("reply", ""+msg)
+		}
+	})
+
+	server.OnEvent("/chat", "msg", func(s socketio.Conn, msg string) string {
+		s.SetContext(msg)
+		return "enviado... " + msg
+	})
+
+	server.OnEvent("/", "bye", func(s socketio.Conn) string {
+		last := s.Context().(string)
+		s.Emit("bye", last)
+		s.Close()
+		return last
+	})
+
+	server.OnError("/", func(s socketio.Conn, e error) {
+		fmt.Println("meet error:", e)
+	})
+
+	server.OnDisconnect("/", func(s socketio.Conn, reason string) {
+		delete(clientes, s.ID())
+		fmt.Println("closed", reason)
+	})
+
+	go server.Serve()
+	defer server.Close()
+
+	http.Handle("/socket.io/", server)
+	http.Handle("/", http.FileServer(http.Dir("./web")))
+	log.Println("Serving at localhost:8000...")
+	log.Fatal(http.ListenAndServe(":8000", nil))
+}
+
+// PrintMemUsage outputs the current, total and OS memory being used. As well as the number
+// of garage collection cycles completed.
+/*func PrintMemUsage() {
+	var m runtime.MemStats
+	runtime.ReadMemStats(&m)
+	// For info on each, see: https://golang.org/pkg/runtime/#MemStats
+	fmt.Printf("Alloc = %v MiB", bToMb(m.Alloc))
+	fmt.Printf("\tTotalAlloc = %v MiB", bToMb(m.TotalAlloc))
+	fmt.Printf("\tSys = %v MiB", bToMb(m.Sys))
+	fmt.Printf("\tNumGC = %v\n", m.NumGC)
+	fmt.Printf("\tMallocs = %v\n", bToMb(m.Mallocs))
+	fmt.Printf("\tFrees = %v\n", bToMb(m.Frees))
+
+}
+
+func bToMb(b uint64) uint64 {
+	return b / 1024 / 1024
+}*/

@@ -1,0 +1,92 @@
+package main
+// 1.7 G para 15 milhoes de usuarios(registros)
+/// 20 s para gerar 15 milhoes de usuarios
+/// 7.4s para carregar na memoria 15 milhoes de usuarios
+
+import (
+	"fmt"
+	"io/ioutil"
+	"unsafe"
+
+	"gopkg.in/mgo.v2/bson"
+)
+
+type Endereco struct {
+	Uf          string `omitempty,bson:"uf"`
+	Bairro      string `omitempty,bson:"bairro"`
+	Cidade      string `omitempty,bson:"cidade"`
+	N           int    `omitempty,bson:"n"`
+	Logradouro  string `omitempty,bson:"logradouro"`
+	Complemento string `omitempty,bson:"complemento"`
+	Teste       string `omitempty,bson:"teste"`
+}
+
+// `bson:" inline "`
+type Usuario struct {
+	Uuid     string   `omitempty,bson:"uuid"`
+	Nome     string   `omitempty,bson:"nome"`
+	Email    string   `omitempty,bson:"email"`
+	Endereco Endereco `omitempty,bson:"endereco"`
+	TesteU   string   `omitempty,bson:"teste"`
+}
+
+var clientes map[string]Usuario
+
+func main() {
+	test()
+}
+func test() {
+	/*
+		clientes = make(map[string]Usuario)
+
+		for i := 1; i < 15000000; i++ {
+			user := Usuario{
+				Uuid:  "3bff3d56-0dfa-474f-9260-0a22b11db21c",
+				Nome:  "gil TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDATWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDATWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDATWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDATWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDATWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDATWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDATWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDATWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDATWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDATWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDATWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDATWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDATWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDATWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDATWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDATWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDATWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA",
+				Email: "TWEAWTEWUADWYDBy@ADSDHBADA.ADASDASDA",
+			}
+
+			user.Endereco = Endereco{
+				Uf:          "SP",
+				Bairro:      "JD. Silveira",
+				Cidade:      "Barueri",
+				N:           446,
+				Logradouro:  "Rua Brigadeiro Jordão",
+				Complemento: " Escadão",
+			}
+			clientes[string(i)] = user
+		}
+
+		data, err := bson.Marshal(&clientes)
+		if err != nil {
+			panic(err)
+		}
+
+		//fmt.Println("Memory >> *.BIN:")
+		//fmt.Println("USER Memory:", unsafe.Sizeof(clientes))
+		//fmt.Println("USER Armazenado Memory:", unsafe.Sizeof(data))
+		//fmt.Println("BINARY:", data)
+		//	fmt.Print("DUMP: ")
+		//spew.Dump(data)*
+
+		ioutil.WriteFile("filename3.bin", data, 0644)
+	*/
+	fmt.Println(".BIN >> Memory:")
+	content, err := ioutil.ReadFile("filename3.bin")
+	if err != nil {
+		panic(err)
+	}
+	var obj map[string]Usuario
+
+	if err := bson.Unmarshal(content, &obj); err != nil {
+		panic(err)
+	}
+
+	//fmt.Println("USER Memory:", unsafe.Sizeof(obj))
+	fmt.Println("USER Armazenado Memory RAW :", unsafe.Sizeof(content))
+	//spew.Dump(obj)
+	//fmt.Println("BINARY:", data)
+	fmt.Print("DUMP: ")
+	//spew.Dump(obj)
+	fmt.Println(len(obj))
+}

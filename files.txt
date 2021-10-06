@@ -1,0 +1,21 @@
+package main
+import (
+    "fmt";
+    "os";
+)
+func main()
+{
+    inName := "file-rw.bin";
+    inPerm :=  0666;
+    inFile, inErr := os.Open(inName, os.O_RDONLY, inPerm);
+    if inErr == nil {
+        inBufLen := 16;
+        inBuf := make([]byte, inBufLen);
+        n, inErr := inFile.Read(inBuf);
+        for inErr == nil {
+            fmt.Println(n, inBuf[0:n]);
+            n, inErr = inFile.Read(inBuf);
+        }
+    }
+    inErr = inFile.Close();
+}

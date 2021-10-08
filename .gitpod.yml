@@ -2,7 +2,7 @@ ports:
 - port: 8000
   onOpen: open-preview
 # start up tasks
-#tasks:
-#- init: mkdir -p /workspace/mongo && mongod --dbpath /workspace/mongo
+tasks:
+- init: mkdir -p /workspace/mongo && mongod --dbpath /workspace/mongo
 image:
   file: .gitpod.Dockerfile

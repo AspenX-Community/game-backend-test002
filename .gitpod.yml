@@ -4,3 +4,5 @@ ports:
 # start up tasks
 #tasks:
 #- init: mkdir -p /workspace/mongo && mongod --dbpath /workspace/mongo
+image:
+  file: .gitpod.Dockerfile

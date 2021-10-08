@@ -1,33 +1,24 @@
 package storage
 
 import (
-	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"reflect"
 	"strings"
 
+	"github.com/davecgh/go-spew/spew"
 	"gopkg.in/mgo.v2/bson"
 )
 
 // Constante #define MINHA_COSNTANTE 10
 const STORAGE_PATH = "../storage"
-const STORAGE_INDEX = "/" + "index.bin"
 
 type Dao struct {
-	path      string
-	pathIndex string
-	namespace string
-	// Mapa das reigioes de ID
-	mappingIndex map[string][]string
-	// Mapa com os objetos
-	list       map[string]interface{}
+	path       string
+	namespace  string
+	mapping    map[string]interface{}
 	repository Repository
-	// Funcoes que lidam com o mapeamento
-	addMappingIndex func(string, interface{})
-	removeMappingIndex func(string)
-	addMapping func(string, interface{})
-	removeMapping func(string)
 }
 
 //  Mapa que aplica um sketon em todos os dados
@@ -40,7 +31,7 @@ func Use(entity interface{}) FabricRepository {
 		mapping = make(map[string]Dao)
 	}
 
-	name := strings.ToLower(getNameEntity(&entity))
+	name := strings.ToLower(getNameEntity(entity))
 	createDir(STORAGE_PATH)
 
 	return FabricRepository{
@@ -55,16 +46,31 @@ func Use(entity interface{}) FabricRepository {
 				repository = Repository{
 					namespace: name,
 					Save: func(object interface{}) {
+						//data := getEntity(object)
+						//spew.Dump(data)
+						mapping[name].mapping["teste"] = object
 
-						Id := reflect.ValueOf(object).Elem().FieldByName("Id")
+						byteArray := toBSON(object)
+						spew.Dump(byteArray)
 
-						if Id.IsZero() {
-							fmt.Println("O Id não pode ser Vazio!!")
-							return
-						}
+						readInArray(byteArray, object)
+						spew.Dump(object)
 
-						mapping[name].addMapping(Id.String(), object)
+						byteArray10 := toBSON(mapping[name].mapping["teste"])
+						spew.Dump(byteArray10)
 
+						var objTest10 interface{}
+
+						readInArray(byteArray10, objTest10)
+						spew.Dump(objTest10)
+						/*byteArray := toBSON(data)
+						var objTest Entity
+
+						readInArray(byteArray, objTest)
+
+						fmt.Println(objTest)
+						spew.Dump(objTest)
+						spew.Dump(objTest.Data)*/
 					},
 					// Pega
 					Get: func(int) {
@@ -84,26 +90,10 @@ func Use(entity interface{}) FabricRepository {
 					},
 				}
 				mapping[name] = Dao{
-					path:         path,
-					pathIndex:    path + STORAGE_INDEX,
-					namespace:    name,
-					mappingIndex: make(map[string][]string),
-					list:         make(map[string]interface{}),
-					repository:   repository,
-					addMappingIndex: func(string, interface{}){
-
-					},
-					removeMappingIndex: func(string){
-
-					},
-					addMapping: func(id string, object interface{}){
-						
-						mapping[name].list[id] = object;
-						
-					},
-					removeMapping: func(string){
-
-					},
+					path:       path + "/" + "index.bin",
+					namespace:  name,
+					mapping:    make(map[string]interface{}),
+					repository: repository,
 				}
 
 				return mapping[name].repository
@@ -117,7 +107,16 @@ func Use(entity interface{}) FabricRepository {
 	}
 }
 
-func getNameEntity(entity *interface{}) string {
+/*func getEntity(object interface{}) Entity {
+
+	//spew.Dump(object)
+	return Entity{
+		Id:   "3bff3d56-0dfa-474f-9260-0a22b11db21c",
+		Data: toBSON(object),
+	}
+
+}*/
+func getNameEntity(entity interface{}) string {
 	if t := reflect.TypeOf(entity); t.Kind() == reflect.Ptr {
 		return t.Elem().Name()
 	} else {
@@ -164,14 +163,6 @@ func toBSON(ent interface{}) []byte {
 	}
 	return data
 }
-
-func readInArray(byteArray []byte, obj *interface{}) {
-	if err := bson.Unmarshal(byteArray, obj); err != nil {
-		panic(err)
-	}
-}
-
-/*
 func saveInFile(filename string, data []byte) {
 	ioutil.WriteFile(filename, data, 0644)
 }
@@ -185,4 +176,9 @@ func readInFile(filename string, obj interface{}) {
 	readInArray(content, obj)
 
 }
-*/
+
+func readInArray(byteArray []byte, obj interface{}) {
+	if err := bson.Unmarshal(byteArray, &obj); err != nil {
+		panic(err)
+	}
+}

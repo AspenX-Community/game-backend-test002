@@ -5,14 +5,23 @@ import (
 	"Myproject/src/web"
 )
 
-type Usuario struct{}
+type Usuario struct {
+	Id   string
+	Nome string
+}
 
 func main() {
 
-	WebServer := web.Build(8080)
+	//WebServer := web.Build(8080)
 
-	storage.Use(Usuario{}).Build()
+	repository := storage.Use(Usuario{}).Build()
 
-	defer WebServer.Start()
+	user := Usuario{
+		Id:   "sadsada",
+		Nome: "Gilberto",
+	}
+	repository.Save(&user)
+
+	//defer WebServer.Start()
 
 }

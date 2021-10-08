@@ -12,7 +12,7 @@ type Usuario struct {
 
 func main() {
 
-	//WebServer := web.Build(8080)
+	WebServer := web.Build(8080)
 
 	repository := storage.Use(Usuario{}).Build()
 
@@ -22,6 +22,6 @@ func main() {
 	}
 	repository.Save(&user)
 
-	//defer WebServer.Start()
+	defer WebServer.Start()
 
 }

@@ -24,10 +24,10 @@ type Dao struct {
 	list       map[string]interface{}
 	repository Repository
 	// Funcoes que lidam com o mapeamento
-	addMappingIndex func(string, interface{})
+	addMappingIndex    func(string, interface{})
 	removeMappingIndex func(string)
-	addMapping func(string, interface{})
-	removeMapping func(string)
+	addMapping         func(string, interface{})
+	removeMapping      func(string)
 }
 
 //  Mapa que aplica um sketon em todos os dados
@@ -90,18 +90,18 @@ func Use(entity interface{}) FabricRepository {
 					mappingIndex: make(map[string][]string),
 					list:         make(map[string]interface{}),
 					repository:   repository,
-					addMappingIndex: func(string, interface{}){
+					addMappingIndex: func(string, interface{}) {
 
 					},
-					removeMappingIndex: func(string){
+					removeMappingIndex: func(string) {
 
 					},
-					addMapping: func(id string, object interface{}){
-						
-						mapping[name].list[id] = object;
-						
+					addMapping: func(id string, object interface{}) {
+
+						mapping[name].list[id] = object
+
 					},
-					removeMapping: func(string){
+					removeMapping: func(string) {
 
 					},
 				}
